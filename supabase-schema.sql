@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS profiles (
     full_name TEXT,
     language TEXT DEFAULT 'id' CHECK (language IN ('id', 'en')),
     theme TEXT DEFAULT 'system' CHECK (theme IN ('system', 'dark', 'light')),
+    is_guest BOOLEAN DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -138,12 +139,13 @@ CREATE INDEX IF NOT EXISTS idx_contributions_goal ON goal_contributions(goal_id)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, full_name, language, theme)
+  INSERT INTO public.profiles (id, full_name, language, theme, is_guest)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email),
     'id',
-    'system'
+    'system',
+    CASE WHEN NEW.email LIKE 'guest_%@okane.app' THEN true ELSE false END
   );
   RETURN NEW;
 END;

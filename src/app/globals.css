@@ -702,6 +702,65 @@ tr:hover td {
     padding: 20px;
     margin: 8px;
   }
+
+  /* Mobile Table Card View */
+  .table-container table,
+  .table-container thead,
+  .table-container tbody,
+  .table-container th,
+  .table-container td,
+  .table-container tr {
+    display: block;
+  }
+
+  .table-container thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  .table-container tr {
+    margin-bottom: 12px;
+    border: 1px solid var(--border-primary) !important;
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    padding: 8px 12px;
+  }
+
+  .table-container td {
+    border: none !important;
+    position: relative;
+    padding: 8px 0 8px 40% !important;
+    text-align: right !important;
+    min-height: 36px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .table-container td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 35%;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .table-container td:last-child {
+    padding-top: 12px !important;
+    margin-top: 8px;
+    border-top: 1px dashed var(--border-primary) !important;
+    justify-content: center;
+  }
+  .table-container td:last-child::before {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {

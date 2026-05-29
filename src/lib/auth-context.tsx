@@ -12,7 +12,7 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
   signUpWithEmail: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
   signInWithGoogle: () => Promise<void>;
-  signInWithDemo: () => Promise<{ error: string | null }>;
+  signInWithGuest: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -99,35 +99,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const signInWithDemo = async () => {
-    const demoEmail = 'demo@okane.app';
-    const demoPassword = 'demo123456';
+  const signInWithGuest = async () => {
+    // Generate random guest email
+    const uuid = crypto.randomUUID().substring(0, 8);
+    const guestEmail = `guest_${uuid}@okane.app`;
+    const guestPassword = crypto.randomUUID();
 
-    // Try to sign in first
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: demoEmail,
-      password: demoPassword,
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: guestEmail,
+      password: guestPassword,
+      options: { data: { full_name: `Guest ${uuid}` } },
     });
 
-    if (signInError) {
-      // If demo account doesn't exist, create it
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: demoEmail,
-        password: demoPassword,
-        options: { data: { full_name: 'Demo User' } },
+    if (signUpError) return { error: signUpError.message };
+
+    if (data.user) {
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        full_name: `Guest ${uuid}`,
+        language: 'id',
+        theme: 'system',
+        is_guest: true
       });
-
-      if (signUpError) return { error: signUpError.message };
-
-      if (data.user) {
-        await supabase.from('profiles').upsert({
-          id: data.user.id,
-          full_name: 'Demo User',
-          language: 'id',
-          theme: 'system',
-        });
-        await seedDefaultCategories(data.user.id);
-      }
+      await seedDefaultCategories(data.user.id);
     }
 
     return { error: null };
@@ -177,7 +171,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signInWithEmail,
         signUpWithEmail,
         signInWithGoogle,
-        signInWithDemo,
+        signInWithGuest,
         signOut,
         refreshProfile,
       }}

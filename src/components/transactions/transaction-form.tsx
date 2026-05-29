@@ -6,7 +6,8 @@ import { useI18n } from '@/lib/i18n';
 import { getCategories, createTransaction, updateTransaction } from '@/lib/services/data-service';
 import { formatInputRupiah, parseRupiah } from '@/lib/utils';
 import type { Category, Transaction, TransactionType } from '@/lib/types';
-import { X } from 'lucide-react';
+import { X, Camera, Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/toast';
 import styles from './transaction-form.module.css';
 
 interface TransactionFormProps {
@@ -18,6 +19,7 @@ interface TransactionFormProps {
 export default function TransactionForm({ onClose, onSaved, editTransaction }: TransactionFormProps) {
   const { user } = useAuth();
   const { t } = useI18n();
+  const { showToast } = useToast();
 
   const [type, setType] = useState<TransactionType>(editTransaction?.type || 'expense');
   const [amountDisplay, setAmountDisplay] = useState(editTransaction ? formatInputRupiah(editTransaction.amount.toString()) : '');
@@ -27,6 +29,7 @@ export default function TransactionForm({ onClose, onSaved, editTransaction }: T
   const [time, setTime] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [saving, setSaving] = useState(false);
+  const [scanning, setScanning] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -95,6 +98,48 @@ export default function TransactionForm({ onClose, onSaved, editTransaction }: T
     onSaved();
   };
 
+  const handleScanReceipt = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setScanning(true);
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64data = reader.result as string;
+        const res = await fetch('/api/scan-receipt', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64: base64data }),
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          throw new Error(data.error || 'Gagal memindai struk');
+        }
+
+        if (data.amount && data.amount > 0) {
+          setAmountDisplay(formatInputRupiah(data.amount.toString()));
+          if (data.description) {
+            setDescription(data.description);
+          }
+          setType('expense');
+          showToast('Data struk berhasil diekstrak!');
+        } else {
+          showToast('Tidak dapat menemukan nominal di struk', 'error');
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'Terjadi kesalahan OCR', 'error');
+    } finally {
+      setScanning(false);
+      e.target.value = ''; // reset input
+    }
+  };
+
   const handleAmountChange = (value: string) => {
     const formatted = formatInputRupiah(value);
     setAmountDisplay(formatted);
@@ -104,8 +149,15 @@ export default function TransactionForm({ onClose, onSaved, editTransaction }: T
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h2 className="modal-title">
+          <h2 className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {editTransaction ? t.editTransaction : t.addTransaction}
+            {!editTransaction && (
+              <label className={`btn btn-sm ${styles.scanBtn}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'pointer', background: 'rgba(99,102,241,0.1)', color: 'var(--color-primary)', border: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem' }}>
+                {scanning ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
+                {scanning ? 'Memindai...' : 'Scan Struk'}
+                <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handleScanReceipt} disabled={scanning} />
+              </label>
+            )}
           </h2>
           <button className="btn btn-ghost btn-icon" onClick={onClose}>
             <X size={20} />

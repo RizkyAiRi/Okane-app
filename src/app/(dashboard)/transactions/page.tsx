@@ -167,7 +167,7 @@ export default function TransactionsPage() {
               ) : (
                 transactions.map(tx => (
                   <tr key={tx.id}>
-                    <td>
+                    <td data-label={t.dateTime}>
                       <span className={styles.dateText}>
                         {new Date(tx.transaction_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                       </span>
@@ -175,24 +175,24 @@ export default function TransactionsPage() {
                         {new Date(tx.transaction_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </td>
-                    <td>
+                    <td data-label={t.type}>
                       <span className={`badge ${tx.type === 'income' ? 'badge-income' : 'badge-expense'}`}>
                         {tx.type === 'income' ? t.income : t.expense}
                       </span>
                     </td>
-                    <td>
+                    <td data-label={t.category}>
                       <span className={styles.categoryCell}>
                         <span>{tx.category?.icon}</span>
                         <span>{tx.category?.name || '-'}</span>
                       </span>
                     </td>
-                    <td className={styles.descCell}>{tx.description || '-'}</td>
-                    <td style={{ textAlign: 'right' }}>
+                    <td data-label={t.description} className={styles.descCell}>{tx.description || '-'}</td>
+                    <td data-label={t.amount} style={{ textAlign: 'right' }}>
                       <span className={`${styles.amountText} ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
                         {tx.type === 'income' ? '+' : '-'}{formatRupiah(tx.amount)}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Aksi">
                       <div className={styles.actions}>
                         <button className="btn btn-ghost btn-icon btn-sm" onClick={() => handleEdit(tx)} title={t.edit}>
                           <Edit3 size={15} />

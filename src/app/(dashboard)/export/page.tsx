@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/toast';
 import Header from '@/components/layout/header';
+import GuestModal from '@/components/ui/guest-modal';
 import { getTransactions } from '@/lib/services/data-service';
 import { formatRupiah } from '@/lib/utils';
 import type { Transaction, Category, TransactionType } from '@/lib/types';
@@ -13,7 +14,7 @@ import * as XLSX from 'xlsx';
 import styles from './export.module.css';
 
 export default function ExportPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { t } = useI18n();
   const { showToast } = useToast();
 
@@ -23,6 +24,7 @@ export default function ExportPage() {
   const [preview, setPreview] = useState<(Transaction & { category: Category })[]>([]);
   const [loading, setLoading] = useState(false);
   const [previewed, setPreviewed] = useState(false);
+  const [showGuestModal, setShowGuestModal] = useState(false);
 
   const handlePreview = async () => {
     if (!user) return;
@@ -40,6 +42,10 @@ export default function ExportPage() {
   };
 
   const handleExport = () => {
+    if (profile?.is_guest) {
+      setShowGuestModal(true);
+      return;
+    }
     if (preview.length === 0) {
       showToast('Tidak ada data untuk diexport', 'error');
       return;
@@ -169,6 +175,8 @@ export default function ExportPage() {
             )}
           </div>
         )}
+
+        <GuestModal isOpen={showGuestModal} onClose={() => setShowGuestModal(false)} />
       </div>
     </>
   );

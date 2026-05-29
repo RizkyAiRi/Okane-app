@@ -10,6 +10,7 @@ export interface Profile {
   full_name: string | null;
   language: Language;
   theme: ThemeMode;
+  is_guest: boolean;
   created_at: string;
 }
 

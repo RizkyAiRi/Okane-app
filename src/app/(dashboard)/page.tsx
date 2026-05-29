@@ -6,10 +6,10 @@ import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/toast';
 import Header from '@/components/layout/header';
 import TransactionForm from '@/components/transactions/transaction-form';
-import { getDashboardSummary, getChartData, getCategorySummary, getTransactions } from '@/lib/services/data-service';
+import { getDashboardSummary, getChartData, getCategorySummary, getTransactions, deleteTransaction } from '@/lib/services/data-service';
 import { formatRupiah, percentChange } from '@/lib/utils';
 import type { Transaction, Category, CategorySummary, ChartDataPoint } from '@/lib/types';
-import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight, Edit3, Trash2 } from 'lucide-react';
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   PieChart, Pie, Cell, Legend,
@@ -34,6 +34,7 @@ export default function DashboardPage() {
   const [categorySummary, setCategorySummary] = useState<CategorySummary[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<(Transaction & { category: Category })[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [editTx, setEditTx] = useState<(Transaction & { category: Category }) | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
@@ -63,7 +64,20 @@ export default function DashboardPage() {
 
   const handleTransactionSaved = () => {
     setShowForm(false);
-    showToast(t.transactionAdded);
+    setEditTx(null);
+    showToast(editTx ? t.transactionUpdated : t.transactionAdded);
+    loadData();
+  };
+
+  const handleEdit = (tx: Transaction & { category: Category }) => {
+    setEditTx(tx);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm(t.deleteTransactionConfirm || 'Hapus transaksi ini?')) return;
+    await deleteTransaction(id);
+    showToast(t.transactionDeleted || 'Transaksi dihapus');
     loadData();
   };
 
@@ -94,7 +108,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <Header onAddTransaction={() => setShowForm(true)} />
+      <Header onAddTransaction={() => { setEditTx(null); setShowForm(true); }} />
       <div className={styles.container}>
         {/* Summary Cards */}
         <div className="grid-summary">
@@ -240,10 +254,18 @@ export default function DashboardPage() {
                       {tx.category?.name} • {new Date(tx.transaction_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
-                  <p className={`${styles.txAmount} ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
-                    {tx.type === 'income' ? '+' : '-'}{formatRupiah(tx.amount)}
-                  </p>
-                </div>
+                    <p className={`${styles.txAmount} ${tx.type === 'income' ? 'text-income' : 'text-expense'}`} style={{ marginRight: '16px' }}>
+                      {tx.type === 'income' ? '+' : '-'}{formatRupiah(tx.amount)}
+                    </p>
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      <button className="btn btn-ghost btn-icon btn-sm" onClick={() => handleEdit(tx)} title={t.edit}>
+                        <Edit3 size={15} />
+                      </button>
+                      <button className="btn btn-ghost btn-icon btn-sm" onClick={() => handleDelete(tx.id)} title={t.delete} style={{ color: 'var(--color-expense)' }}>
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
               ))}
             </div>
           ) : (
@@ -259,8 +281,9 @@ export default function DashboardPage() {
       {/* Transaction Form Modal */}
       {showForm && (
         <TransactionForm
-          onClose={() => setShowForm(false)}
+          onClose={() => { setShowForm(false); setEditTx(null); }}
           onSaved={handleTransactionSaved}
+          editTransaction={editTx || undefined}
         />
       )}
     </>

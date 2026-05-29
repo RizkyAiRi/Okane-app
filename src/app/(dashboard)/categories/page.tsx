@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/toast';
 import Header from '@/components/layout/header';
+import GuestModal from '@/components/ui/guest-modal';
 import { getCategories, createCategory, updateCategory, deleteCategory } from '@/lib/services/data-service';
 import type { Category, TransactionType } from '@/lib/types';
 import { Plus, Edit3, Trash2, X } from 'lucide-react';
@@ -14,7 +15,7 @@ const EMOJI_OPTIONS = ['💰', '💼', '📈', '🎁', '💵', '🍔', '🚗', '
 const COLOR_OPTIONS = ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#06b6d4', '#6366f1', '#8b5cf6', '#ec4899', '#14b8a6', '#84cc16', '#64748b', '#0ea5e9'];
 
 export default function CategoriesPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { t } = useI18n();
   const { showToast } = useToast();
 
@@ -24,6 +25,7 @@ export default function CategoriesPage() {
   const [editCat, setEditCat] = useState<Category | null>(null);
   const [form, setForm] = useState({ name: '', icon: '💰', color: '#6366f1' });
   const [loading, setLoading] = useState(true);
+  const [showGuestModal, setShowGuestModal] = useState(false);
 
   const loadCategories = async () => {
     if (!user) return;
@@ -38,12 +40,20 @@ export default function CategoriesPage() {
   const filtered = categories.filter(c => c.type === activeTab);
 
   const openAdd = () => {
+    if (user && (user as any).is_guest || profile?.is_guest) {
+      setShowGuestModal(true);
+      return;
+    }
     setEditCat(null);
     setForm({ name: '', icon: '💰', color: '#6366f1' });
     setShowModal(true);
   };
 
   const openEdit = (cat: Category) => {
+    if (profile?.is_guest) {
+      setShowGuestModal(true);
+      return;
+    }
     setEditCat(cat);
     setForm({ name: cat.name, icon: cat.icon, color: cat.color });
     setShowModal(true);
@@ -70,6 +80,10 @@ export default function CategoriesPage() {
   };
 
   const handleDelete = async (id: string) => {
+    if (profile?.is_guest) {
+      setShowGuestModal(true);
+      return;
+    }
     if (!confirm('Hapus kategori ini?')) return;
     await deleteCategory(id);
     showToast('Kategori dihapus');
@@ -186,6 +200,8 @@ export default function CategoriesPage() {
             </div>
           </div>
         )}
+
+        <GuestModal isOpen={showGuestModal} onClose={() => setShowGuestModal(false)} />
       </div>
     </>
   );

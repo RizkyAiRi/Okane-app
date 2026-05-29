@@ -10,7 +10,7 @@ import styles from './login.module.css';
 
 export default function LoginPage() {
   const { t } = useI18n();
-  const { signInWithEmail, signInWithGoogle, signInWithDemo } = useAuth();
+  const { signInWithEmail, signInWithGoogle, signInWithGuest } = useAuth();
   const router = useRouter();
 
   const [email, setEmail] = useState('');
@@ -37,10 +37,10 @@ export default function LoginPage() {
     await signInWithGoogle();
   };
 
-  const handleDemoLogin = async () => {
+  const handleGuestLogin = async () => {
     setLoading(true);
     setError('');
-    const { error } = await signInWithDemo();
+    const { error } = await signInWithGuest();
     if (error) {
       setError(error);
       setLoading(false);
@@ -64,14 +64,15 @@ export default function LoginPage() {
           <p className={styles.subtitle}>{t.loginSubtitle}</p>
         </div>
 
-        {/* Demo button */}
-        {/*<button
+        {/* Guest button */}
+        <button
+          type="button"
           className={`${styles.demoBtn}`}
-          onClick={handleDemoLogin}
+          onClick={handleGuestLogin}
           disabled={loading}
         >
-          🚀 {t.loginWithDemo}
-        </button>*/}
+          🕵️ Masuk sebagai Tamu (Guest)
+        </button>
 
         {/* Google button */}
         <button
