@@ -65,13 +65,13 @@ export default function LoginPage() {
         </div>
 
         {/* Demo button */}
-        <button
+        {/*<button
           className={`${styles.demoBtn}`}
           onClick={handleDemoLogin}
           disabled={loading}
         >
           🚀 {t.loginWithDemo}
-        </button>
+        </button>*/}
 
         {/* Google button */}
         <button
