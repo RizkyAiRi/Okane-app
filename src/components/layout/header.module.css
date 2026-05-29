@@ -1,0 +1,63 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  min-height: var(--header-height);
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  gap: 16px;
+}
+
+.left {
+  flex: 1;
+  min-width: 0;
+}
+
+.greeting {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.notifBtn {
+  position: relative;
+}
+
+.addText {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 16px;
+    padding-left: 56px;
+  }
+
+  .addText {
+    display: none;
+  }
+
+  .greeting {
+    font-size: 14px;
+  }
+}

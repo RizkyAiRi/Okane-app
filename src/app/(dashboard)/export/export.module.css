@@ -1,0 +1,7 @@
+.container { padding: 24px 32px; max-width: 1000px; animation: fadeIn var(--transition-base) ease-out; }
+.filterCard { margin-bottom: 20px; }
+.filterGrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.sectionTitle { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+.previewCard { margin-bottom: 20px; }
+.moreText { text-align: center; padding: 12px; color: var(--text-tertiary); font-size: 13px; }
+@media (max-width: 768px) { .container { padding: 16px; padding-top: 72px; } .filterGrid { grid-template-columns: 1fr; } }

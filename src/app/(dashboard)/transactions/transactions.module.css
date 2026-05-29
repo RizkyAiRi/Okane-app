@@ -1,0 +1,101 @@
+.container {
+  padding: 24px 32px;
+  max-width: 1400px;
+  animation: fadeIn var(--transition-base) ease-out;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.searchBox {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.searchInput {
+  padding-left: 42px !important;
+}
+
+.dateText {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.timeText {
+  display: block;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.categoryCell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.descCell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.amountText {
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 12px 0;
+}
+
+.pageInfo {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+    padding-top: 72px;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .filters .input,
+  .filters .select {
+    max-width: none !important;
+  }
+}

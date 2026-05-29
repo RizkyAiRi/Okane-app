@@ -1,0 +1,34 @@
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.amountInput {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency {
+  position: absolute;
+  left: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.amountField {
+  padding-left: 42px !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+}
+
+.errorText {
+  color: var(--color-expense);
+  font-size: 12px;
+  margin-top: 4px;
+}

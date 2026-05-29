@@ -1,0 +1,11 @@
+.container { padding: 24px 32px; max-width: 700px; animation: fadeIn var(--transition-base) ease-out; }
+.section { margin-top: 20px; }
+.sectionHeader { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.sectionTitle { font-size: 16px; font-weight: 700; }
+.optionGrid { display: flex; gap: 10px; flex-wrap: wrap; }
+.optionCard { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: var(--radius-md); border: 2px solid var(--border-primary); background: var(--bg-tertiary); cursor: pointer; transition: all var(--transition-fast); font-family: inherit; font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+.optionCard:hover { border-color: var(--border-hover); color: var(--text-primary); }
+.optionActive { border-color: var(--color-primary) !important; background: var(--color-primary-bg); color: var(--color-primary) !important; }
+.optionEmoji { font-size: 22px; }
+.dangerSection { border-color: var(--color-expense-border) !important; }
+@media (max-width: 768px) { .container { padding: 16px; padding-top: 72px; } }

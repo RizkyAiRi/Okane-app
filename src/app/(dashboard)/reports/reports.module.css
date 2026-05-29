@@ -1,0 +1,14 @@
+.container { padding: 24px 32px; max-width: 1400px; animation: fadeIn var(--transition-base) ease-out; }
+.summaryIcon { width: 40px; height: 40px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.summaryLabel { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+.summaryValue { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.chartSection { margin-bottom: 20px; }
+.sectionTitle { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+.chartsRow { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
+.catList { display: flex; flex-direction: column; gap: 8px; padding: 0 8px; }
+.catItem { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.catDot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.catLabel { flex: 1; color: var(--text-secondary); }
+.catPct { font-weight: 700; color: var(--text-primary); }
+@media (max-width: 1024px) { .chartsRow { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .container { padding: 16px; padding-top: 72px; } }
