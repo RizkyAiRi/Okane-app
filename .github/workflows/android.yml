@@ -39,6 +39,8 @@ jobs:
         run: npm run build
         env:
           BUILD_FOR_CAPACITOR: 'true'
+          NEXT_PUBLIC_SUPABASE_URL: 'https://lkdybbbtvcxtmloyyzzh.supabase.co'
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'sb_publishable_Nga4NOIzRoavLOW5kWDZLQ_EDeQ26bs'
 
       - name: Restore API Routes
         run: |
