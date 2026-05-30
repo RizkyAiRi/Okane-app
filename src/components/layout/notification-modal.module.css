@@ -56,6 +56,7 @@
   padding: 24px;
   background: var(--color-bg-card);
   overflow-y: auto;
+  flex: 1;
 }
 
 .greeting {
