@@ -107,7 +107,15 @@ export default function TransactionForm({ onClose, onSaved, editTransaction }: T
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64data = reader.result as string;
-        const res = await fetch('https://okane-app-eight.vercel.app/api/scan-receipt', {
+        const isCapacitor = typeof window !== 'undefined' && 
+          (window.location.origin.startsWith('capacitor://') || 
+           (window.location.hostname === 'localhost' && !window.location.port));
+        
+        const apiUrl = isCapacitor 
+          ? 'https://okane-app-eight.vercel.app/api/scan-receipt'
+          : '/api/scan-receipt';
+
+        const res = await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ imageBase64: base64data }),
